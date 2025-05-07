@@ -1,5 +1,6 @@
 package com.example.SecureTasker.models;
 
+import com.example.SecureTasker.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="users")
@@ -42,7 +45,15 @@ public class User {
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"),
-
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @Builder.Default
+    private Set<Role> roles = new HashSet<>();
+
+    @PrePersist
+    void prePersist(){
+        LocalDateTime now = LocalDateTime.now();
+        createdAt = new; updatedAt = now;
+        if(status == null) status = UserStatus.ACTIVE;
+    }
 }
